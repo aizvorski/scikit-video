@@ -1,26 +1,38 @@
 #!/usr/bin/env python
 descr = """\
-Example package.
+Video Processing SciKit
 
-This is a do nothing package, to show how to organize a scikit.
+Video processing algorithms for SciPy, including IO, quality metrics, filtering, etc.
+
 """
 
 DISTNAME            = 'scikit-video'
-DESCRIPTION         = 'Example Scikit package'
+DESCRIPTION         = 'Video processing routines for SciPy'
 LONG_DESCRIPTION    = descr
-MAINTAINER          = 'David Cournapeau',
-MAINTAINER_EMAIL    = 'david@ar.media.kyoto-u.ac.jp',
-URL                 = 'http://projects.scipy.org/scipy/scikits'
-LICENSE             = 'MIT'
+MAINTAINER          = 'Alex Izvorski',
+MAINTAINER_EMAIL    = 'aizvorski@gmail.com',
+URL                 = 'https://github.com/aizvorski/scikit-video/'
+LICENSE             = 'GPLv3'
 DOWNLOAD_URL        = URL
 PACKAGE_NAME        = 'skvideo'
 EXTRA_INFO          = dict(
     install_requires=['numpy'],
     classifiers=['Development Status :: 1 - Planning',
-                 'Intended Audience :: Developers',
-                 'Intended Audience :: Science/Research',
-                 'License :: OSI Approved :: BSD License',
-                 'Topic :: Scientific/Engineering']
+            'Environment :: Console',
+            'Intended Audience :: Developers',
+            'Intended Audience :: Science/Research',
+            'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+            'Programming Language :: C',
+            'Programming Language :: Python',
+            'Programming Language :: Python :: 3',
+            'Topic :: Scientific/Engineering',
+            'Topic :: Multimedia :: Video',
+            'Topic :: Multimedia :: Video :: Conversion',
+            'Operating System :: Microsoft :: Windows',
+            'Operating System :: POSIX',
+            'Operating System :: Unix',
+            'Operating System :: MacOS',
+            ]
 )
 
 
