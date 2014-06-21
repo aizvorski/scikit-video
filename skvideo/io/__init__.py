@@ -11,6 +11,9 @@ class VideoCapture:
 
     def __init__(self, filename=None):
         self.filename = filename
+        # TODO find either avconv or ffmpeg, remember which one we found
+        self.convert_command = "avconv"
+        self.probe_command = "avprobe"
         self.info = self.get_info()
         if len(self.info["streams"]) == 0:
             raise ValueError("No streams found")
@@ -22,8 +25,7 @@ class VideoCapture:
         # print "Found video: %d x %d" %(self.width, self.height)
 
     def open(self):
-        # TODO find either avconv or ffmpeg, remember which one we found
-        cmd = ["avconv", '-i', self.filename, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-loglevel', 'error', '-']
+        cmd = [self.convert_command, '-loglevel', 'error', '-i', self.filename, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-']
         self.proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
         self.buf = ""
 
@@ -63,7 +65,7 @@ class VideoCapture:
             else:
                 raise ValueError("Not enough data at end of file, expected %d bytes, read %d" % (nbytes, len(self.buf)))
 
-        image = numpy.fromstring(self.buf[:nbytes], dtype='uint8').reshape((self.height, self.width, self.depth))
+        image = numpy.fromstring(self.buf[:nbytes], dtype=numpy.uint8).reshape((self.height, self.width, self.depth))
 
         # If there is data left over, move it to beginning of buffer for next frame
         if len(self.buf) > nbytes:
@@ -91,25 +93,38 @@ class VideoCapture:
     def get_info(self):
         # NOTE requires a fairly recent avprobe/ffprobe, older versions don't have -of json and only produce INI-like output
         # TODO parse old INI-like output
-        cmd = "avprobe -of json -show_format -show_streams -loglevel error".split() + [self.filename]
+        cmd = [self.probe_command] + "-loglevel error -of json -show_format -show_streams".split() + [self.filename]
         output = subprocess.check_output(cmd)
         info = json.loads(output)
         return info
 
 class VideoWriter:
-    def __init__(self, filename, fourcc='XVID', fps=30, frameSize=None, isColor=True):
-        raise NotImplementedError()
+    def __init__(self, filename, fourcc='XVID', fps=30, frameSize=None, isColor=True, width=None, height=None):
+        self.filename = filename
+        self.convert_command = "avconv"
+
+        if not isColor:
+            raise NotImplementedError()
+        self.width = width
+        self.height = height
+        self.depth = 3 # TODO other depths
+        self.fps = fps
 
     def open(self):
-        raise NotImplementedError()
+        cmd = [self.convert_command, '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', '%dx%d' %(self.width, self.height), '-i', '-', self.filename]
+        self.proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
 
     def isOpened(self):
-        raise NotImplementedError()
+        return (self.proc != None)
 
     def write(self, image):
-        raise NotImplementedError()
+        if image.shape[0] != self.height or image.shape[1] != self.width or image.shape[2] != self.depth:
+            raise ValueError('Image dimensions do not match')
+        self.proc.stdin.write( image.astype(numpy.uint8).tostring() )
 
     def release(self):
-        raise NotImplementedError()
+        self.proc.stdin.close()
+        self.proc.wait()
+        self.proc = None
 
 
