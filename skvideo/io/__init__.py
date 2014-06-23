@@ -85,6 +85,7 @@ class VideoCapture:
         self.buf = None
 
     def get(self, propId):
+        # CV_CAP_PROP_FRAME_COUNT
         raise NotImplementedError()
 
     def set(self, propId, value):
@@ -99,19 +100,33 @@ class VideoCapture:
         return info
 
 class VideoWriter:
-    def __init__(self, filename, fourcc='XVID', fps=30, frameSize=None, isColor=True, width=None, height=None):
+    def __init__(self, filename, fourcc='XVID', fps=30, frameSize=(640, 480), isColor=True):
         self.filename = filename
         self.convert_command = "avconv"
 
+        self.fourcc = fourcc
+        self.fps = fps
+        self.width, self.height = frameSize
+        self.depth = 3 # TODO other depths
+
         if not isColor:
             raise NotImplementedError()
-        self.width = width
-        self.height = height
-        self.depth = 3 # TODO other depths
-        self.fps = fps
+
 
     def open(self):
-        cmd = [self.convert_command, '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', '%dx%d' %(self.width, self.height), '-i', '-', self.filename]
+        cmd = [self.convert_command, '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', '%dx%d' %(self.width, self.height), '-r', str(self.fps), '-i', '-']
+        codecs_map = {
+            'XVID': 'mpeg4',
+            'DIVX': 'mpeg4',
+            'H264': 'libx264',
+            'MJPG': 'mjpeg',
+        }
+        if self.fourcc in codecs_map:
+            vcodec = codecs_map[self.fourcc]
+        else:
+            vcodec = self.fourcc
+        cmd += ['-vcodec', vcodec]
+        cmd += [self.filename]
         self.proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
 
     def isOpened(self):
