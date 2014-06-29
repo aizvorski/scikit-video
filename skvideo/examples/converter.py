@@ -9,7 +9,7 @@ print str(cap.get_info())
 
 retval, image = cap.read()
 
-wr = VideoWriter(wr_filename, width=image.shape[1], height=image.shape[0])
+wr = VideoWriter(wr_filename, 'H264', 30, (image.shape[1], image.shape[0]))
 wr.open()
 
 frame_num = 0

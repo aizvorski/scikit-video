@@ -5,7 +5,7 @@ import numpy
 w, h = 640, 480
 
 filename = sys.argv[1]
-wr = VideoWriter(filename, width=w, height=h)
+wr = VideoWriter(filename, frameSize=(w, h))
 
 x = numpy.linspace(0, 2 * numpy.pi, w)
 y = numpy.linspace(0, 2 * numpy.pi, h).reshape(-1, 1)
