@@ -17,7 +17,7 @@ DOWNLOAD_URL        = URL
 PACKAGE_NAME        = 'skvideo'
 EXTRA_INFO          = dict(
     install_requires=['numpy'],
-    classifiers=['Development Status :: 1 - Planning',
+    classifiers=['Development Status :: 3 - Alpha',
             'Environment :: Console',
             'Intended Audience :: Developers',
             'Intended Audience :: Science/Research',
