@@ -9,23 +9,43 @@ class VideoCapture:
     The API is modelled after cv2.VideoCapture, and in many cases is a drop-in replacement.
     """
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, frameSize=None):
         self.filename = filename
         # TODO find either avconv or ffmpeg, remember which one we found
         self.convert_command = "avconv"
         self.probe_command = "avprobe"
-        self.info = self.get_info()
-        if len(self.info["streams"]) == 0:
-            raise ValueError("No streams found")
-        if self.info["streams"][0]["codec_type"] != "video":
-            raise ValueError("No video stream found")
-        self.width = self.info["streams"][0]["width"]
-        self.height = self.info["streams"][0]["height"]
-        self.depth = 3 # TODO other depths
-        # print "Found video: %d x %d" %(self.width, self.height)
+        self.proc = None
+
+        if frameSize:
+            self.do_resize = True
+            self.width, self.height = frameSize
+        else:
+            self.do_resize = False
+
+        if self.filename:
+            self.info = self.get_info()
+            if len(self.info["streams"]) == 0:
+                raise ValueError("No streams found")
+            if self.info["streams"][0]["codec_type"] != "video":
+                raise ValueError("No video stream found")
+            self.src_width = self.info["streams"][0]["width"]
+            self.src_height = self.info["streams"][0]["height"]
+            if not self.do_resize:
+                self.width = self.src_width
+                self.height = self.src_height
+
+            self.depth = 3 # TODO other depths
+            # print "Found video: %d x %d" %(self.width, self.height)
+            self.open()
 
     def open(self):
-        cmd = [self.convert_command, '-loglevel', 'error', '-i', self.filename, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-']
+        # TODO decide what is best behavior, reopen or leave as it if previously opened
+        if self.isOpened():
+            self.release()
+        cmd = [self.convert_command, '-loglevel', 'error', '-i', self.filename]
+        if self.do_resize:
+            cmd += ['-vf', 'scale=%d:%d' %(self.width, self.height)]
+        cmd += ['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-']
         self.proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
         self.buf = ""
 
