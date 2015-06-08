@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import division
+
 import numpy
 import subprocess
 import json
@@ -47,7 +50,7 @@ class VideoCapture:
             cmd += ['-vf', 'scale=%d:%d' %(self.width, self.height)]
         cmd += ['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-']
         self.proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-        self.buf = ""
+        self.buf = b''
 
     def isOpened(self):
         return (self.proc != None)
@@ -92,7 +95,7 @@ class VideoCapture:
             self.buf = self.buf[nbytes:] # TODO this is a relatively slow operation, optimize
         # Otherwise just forget the buffer
         else:
-            self.buf = ""
+            self.buf = b''
 
         return retval, image
 
@@ -115,7 +118,7 @@ class VideoCapture:
         # NOTE requires a fairly recent avprobe/ffprobe, older versions don't have -of json and only produce INI-like output
         # TODO parse old INI-like output
         cmd = [self.probe_command] + "-loglevel error -of json -show_format -show_streams".split() + [self.filename]
-        output = subprocess.check_output(cmd)
+        output = subprocess.check_output(cmd, universal_newlines=True)
         info = json.loads(output)
         return info
 

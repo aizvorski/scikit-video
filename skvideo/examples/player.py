@@ -6,7 +6,7 @@ import matplotlib.animation as animation
 
 filename = sys.argv[1]
 cap = VideoCapture(filename)
-print str(cap.get_info())
+print(str(cap.get_info()))
 
 
 cap.open()
@@ -23,10 +23,10 @@ def updatefig(*args):
     retval, image = cap.read()
 
     if not retval:
-        print "done"
+        print("done")
         sys.exit()
 
-    print "frame %d" % (frame_num)
+    print("frame %d" % (frame_num))
     frame_num += 1
 
     plt_image.set_array(image)

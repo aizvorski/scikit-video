@@ -8,7 +8,7 @@ def bench_something():
         k**k
     end = time.clock()
 
-    print("Duration: %r" % (end - start,))
+    print(("Duration: %r" % (end - start,)))
 
 if __name__ == "__main__":
     bench_something()
