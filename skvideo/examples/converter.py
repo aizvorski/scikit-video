@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import division
+
 from skvideo.io import VideoCapture, VideoWriter
 import sys
 
@@ -5,7 +8,7 @@ cap_filename, wr_filename = sys.argv[1], sys.argv[2]
 
 cap = VideoCapture(cap_filename)
 cap.open()
-print str(cap.get_info())
+print(str(cap.get_info()))
 
 retval, image = cap.read()
 
@@ -20,9 +23,9 @@ while True:
         break
     wr.write(image)
     
-    print "frame %d" % (frame_num)
+    print("frame %d" % (frame_num))
     frame_num += 1
 
 wr.release()
 cap.release()
-print "done"
+print("done")

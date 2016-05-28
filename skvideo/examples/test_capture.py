@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import division
+
 from skvideo.io import VideoCapture
 import sys
 
@@ -12,8 +15,8 @@ while True:
     if not retval:
         break
 
-    print "frame %d" % (frame_num)
+    print("frame %d" % (frame_num))
     frame_num += 1
 
 cap.release()
-print "done"
+print("done")

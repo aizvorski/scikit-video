@@ -4,7 +4,7 @@ import sys
 
 filename = sys.argv[1]
 cap = VideoCapture(filename)
-print str(cap.get_info())
+print(str(cap.get_info()))
 
 
 cap.open()
@@ -22,7 +22,7 @@ while True:
     retval, image = cap.read()
 
     if not retval:
-        print "done"
+        print("done")
         sys.exit()
 
     surface = pygame.surfarray.make_surface(image)

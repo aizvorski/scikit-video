@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import division
+
 from skvideo.io import VideoWriter
 import sys
 import numpy
@@ -25,10 +28,10 @@ while True:
 
     wr.write(image)
 
-    print "frame %d" % (frame_num)
+    print("frame %d" % (frame_num))
     frame_num += 1
     if frame_num > 300:
         break
 
 wr.release()
-print "done"
+print("done")
